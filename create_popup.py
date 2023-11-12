@@ -11,5 +11,8 @@ def create_popup(screen, message: str | None):
     popup.mainloop()
 
 def destroy_popup(screen, popup):
-    popup.destroy()
-    screen.bye()
+    try:
+        popup.destroy()
+        screen.bye()
+    except Exception as e:
+        print(e)

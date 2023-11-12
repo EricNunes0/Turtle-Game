@@ -3,7 +3,9 @@ from add_points import add_points
 from clear_turtle import clear_turtle
 from create_turtle import create_turtle
 from delete_turtle import delete_turtle
+from play_audio import play_audio
 from settings import screen_background_color, screen_width, screen_height, turtle_left, turtle_speed, walk
+from screen_background_random import screen_background_random
 from random import randint
 from write_points import write_points
 from write_username import write_username
@@ -13,6 +15,7 @@ class move_turtle:
         self.screen = screen
         self.turtle_left = turtle_left
         self.turtle = turtle
+        self.teleport(0, 0)
         self.check = False
         self.color_index = 0
         
@@ -21,7 +24,7 @@ class move_turtle:
 
         self.fruit_x = 0
         self.fruit_y = 0
-        self.fruit_width = walk / 2
+        self.fruit_width = walk# / 2
         self.fruit_turtle = create_turtle()
         self.move_fruit()
 
@@ -42,6 +45,7 @@ class move_turtle:
             y = int(self.turtle.ycor())
             halfWidth = int(screen_width / 2)
             halfHeight = int(screen_height / 2)
+            halfWalk = int(walk / 2)
             if self.fruit_colision(x=x, y=y) == True:
                 self.stop()
                 self.move_fruit()
@@ -52,17 +56,17 @@ class move_turtle:
                     return False
             self.start()
 
-            if x > halfWidth - walk:
-                self.teleport((halfWidth * -1) + walk, y)
-            elif x < (halfWidth * -1) + walk:
-                self.teleport(halfWidth - walk, y)
-            elif y > halfHeight - walk:
-                self.teleport(x, (halfHeight * -1) + walk)
-            elif y < (halfHeight * -1) + walk:
-                self.teleport(x, halfHeight - walk)
+            if x > halfWidth - halfWalk:
+                self.teleport((halfWidth * -1) + halfWalk, y)
+            elif x < (halfWidth * -1) + halfWalk:
+                self.teleport(halfWidth - halfWalk, y)
+            elif y > halfHeight - halfWalk:
+                self.teleport(int(x), (halfHeight * -1) + halfWalk)
+            elif y < (halfHeight * -1) + halfWalk:
+                self.teleport(int(x), halfHeight - halfWalk)
             
             self.turtle.up()
-            self.turtle.forward(walk / 2)
+            self.turtle.forward(walk)# / 2)
             self.color_index += 1
             if self.color_index >= len(colors):
                 self.color_index = 0
@@ -113,8 +117,11 @@ class move_turtle:
         }
     
     def fruit_colision(self, x, y):
-        if x >= self.fruit_x and x < self.fruit_x + self.fruit_width:
-            if y >= self.fruit_y and y < self.fruit_y + self.fruit_width:
+        turtleX = x + int(walk / 2)
+        turtleY = y + int(walk / 2)
+        #print(turtleX, self.fruit_x, self.fruit_x + self.fruit_width)
+        if turtleX >= self.fruit_x and turtleX < self.fruit_x + self.fruit_width:
+            if turtleY >= self.fruit_y and turtleY < self.fruit_y + self.fruit_width:
                 return True
         return False
     
@@ -129,7 +136,13 @@ class move_turtle:
         turtle.setx(x)
         turtle.sety(y)
         turtle.down()
-        turtle.dot(self.fruit_width, "#d02020")
-        delete_turtle(turtle=turtle)
+        self.draw_fruit(turtle=turtle)
         self.fruit_x = x
         self.fruit_y = y
+        screen_background_random(screen=self.screen)
+    
+    def draw_fruit(self, turtle):
+        image = "images/apple.gif"
+        self.screen.addshape(image)
+        turtle.shape(image)
+        play_audio("audios\\eat.mp3")

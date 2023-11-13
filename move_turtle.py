@@ -3,6 +3,7 @@ from add_points import add_points
 from clear_turtle import clear_turtle
 from create_turtle import create_turtle
 from delete_turtle import delete_turtle
+from draw_fruit import draw_fruit
 from play_audio import play_audio
 from settings import screen_background_color, screen_width, screen_height, turtle_left, turtle_speed, walk
 from screen_background_random import screen_background_random
@@ -136,13 +137,9 @@ class move_turtle:
         turtle.setx(x)
         turtle.sety(y)
         turtle.down()
-        self.draw_fruit(turtle=turtle)
+        draw_fruit(screen=self.screen, turtle=turtle, image="images\\apple.gif")
+        play_audio("audios\\eat.mp3")
+
         self.fruit_x = x
         self.fruit_y = y
         screen_background_random(screen=self.screen)
-    
-    def draw_fruit(self, turtle):
-        image = "images/apple.gif"
-        self.screen.addshape(image)
-        turtle.shape(image)
-        play_audio("audios\\eat.mp3")

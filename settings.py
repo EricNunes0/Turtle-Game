@@ -8,6 +8,6 @@ button_height = 60
 
 global turtle_left
 turtle_left = 0
-turtle_speed = 2
 turtle_width = 2
 walk = 20
+applesRequired = 20

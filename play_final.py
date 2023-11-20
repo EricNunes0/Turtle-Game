@@ -7,5 +7,5 @@ def play_final(screen, turtle):
     screen.clearscreen()
     screen.bgpic(resource_path("images/final.png"))
     turtle.clear()
-    play_audio("audios/final.mp3")
+    play_audio("audios\\clear.mp3")
     create_popup(screen, "Parabéns por terminar o jogo!\nSua senha é:\nXr6nfG1K3j4P")

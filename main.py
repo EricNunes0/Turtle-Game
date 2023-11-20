@@ -11,7 +11,7 @@ from resource_path import resource_path
 from screen_background_random import screen_background_random
 from screen_background_set import screen_background_set
 from screen_icon_set import screen_icon_set
-from settings import screen_width, screen_height, screen_background_color, screen_background_image, screen_title, button_width, button_height, turtle_speed, turtle_width
+from settings import screen_width, screen_height, screen_background_color, screen_title, button_width, button_height, turtle_width, applesRequired
 from shape_turtle import shape_turtle
 
 # Configurações da tela
@@ -27,7 +27,7 @@ canvas = screen.getcanvas()
 button_width = button_width
 button_height = button_height
 
-username = screen.textinput("Bem-vindo(a)!", f"Controles:\nCima: ⬆ ou W\nEsquerda: ⬅ ou A\nDireita: ➡ ou D\nBaixo: ⬇ ou S\n\nObjetivo: obter 2000 pontos\n\nMas antes de começar, me conte:\nQual é o seu nome?")
+username = screen.textinput("Bem-vindo(a)!", f"Insira o seu nome:")
 print(username)
 
 if username is None or len(username) <= 0:
@@ -40,7 +40,7 @@ else:
     global turtle
     turtle = create_turtle()
     shape_turtle(screen = screen, turtle=turtle, name = "player1", colors = ["#080", "#040"])
-    edit_turtle(turtle).speed(turtle_speed)
+    edit_turtle(turtle).speed(1)
     edit_turtle(turtle).width(turtle_width)
 
     moviment = move_turtle(screen, turtle, username=username)

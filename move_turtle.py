@@ -3,10 +3,11 @@ from add_points import add_points
 from clear_turtle import clear_turtle
 from create_turtle import create_turtle
 from delete_turtle import delete_turtle
+from draw_controls import draw_controls
 from draw_fruit import draw_fruit
+from draw_hud import draw_hud
 from play_audio import play_audio
-from settings import screen_background_color, screen_width, screen_height, turtle_left, turtle_speed, walk
-from screen_background_random import screen_background_random
+from settings import applesRequired, screen_width, screen_height, turtle_left, walk
 from random import randint
 from write_points import write_points
 from write_username import write_username
@@ -14,11 +15,16 @@ from write_username import write_username
 class move_turtle:
     def __init__(self, screen, turtle, username):
         self.screen = screen
+
+        """ Configurações do jogador """
         self.turtle_left = turtle_left
         self.turtle = turtle
+        self.player_speed = 1
+        self.player_speed_reset()
+
         self.teleport(0, 0)
         self.check = False
-        self.color_index = 0
+        self.stop()
         
         self.turtle.left(90)
         self.turtle.tiltangle(0)
@@ -29,19 +35,19 @@ class move_turtle:
         self.fruit_turtle = create_turtle()
         self.move_fruit()
 
-        self.points = 0
+        self.apples = 0
         self.points_turtle = create_turtle()
-        write_points(self.points_turtle, self.points)
+        write_points(self.points_turtle, self.apples)
+        draw_hud(self.screen)
 
         self.username = username
         self.username_turtle = create_turtle()
         write_username(self.username_turtle, self.username)
+
+        draw_controls(self.screen)
     
     def move(self, name):
-        colors = ["#20a020"]
         if self.check == True:
-            self.turtle.speed(turtle_speed)
-            self.turtle.color(colors[self.color_index])
             x = int(self.turtle.xcor())
             y = int(self.turtle.ycor())
             halfWidth = int(screen_width / 2)
@@ -50,9 +56,11 @@ class move_turtle:
             if self.fruit_colision(x=x, y=y) == True:
                 self.stop()
                 self.move_fruit()
-                self.points += 100
-                add_points(self.points_turtle, name, self.points)
-                if self.points >= 2000:
+                self.player_speed_add()
+
+                self.apples += 1
+                add_points(self.points_turtle, name, self.apples)
+                if self.apples >= applesRequired:
                     self.stop()
                     return False
             self.start()
@@ -67,10 +75,7 @@ class move_turtle:
                 self.teleport(int(x), halfHeight - halfWalk)
             
             self.turtle.up()
-            self.turtle.forward(walk)# / 2)
-            self.color_index += 1
-            if self.color_index >= len(colors):
-                self.color_index = 0
+            self.turtle.forward(walk)
             return True
     
     def start(self):
@@ -87,6 +92,7 @@ class move_turtle:
                 self.turtle.left(value)
                 self.turtle.tiltangle(0)
                 self.turtle_left = value
+                self.turtle.speed(self.player_speed)
                 self.start()
     
     def top(self):
@@ -110,6 +116,16 @@ class move_turtle:
         self.turtle.speed(0)
         self.turtle.goto(x = x, y = y)
         self.turtle.down()
+        self.turtle.speed(self.player_speed)
+    
+    def player_speed_add(self):
+        self.player_speed += 0.05
+        self.player_speed = round(self.player_speed, 2)
+        self.turtle.speed(self.player_speed)
+    
+    def player_speed_reset(self):
+        self.player_speed = 1
+        self.turtle.speed(self.player_speed)
     
     def get_fruit_position(self):
         return {
@@ -123,6 +139,7 @@ class move_turtle:
         #print(turtleX, self.fruit_x, self.fruit_x + self.fruit_width)
         if turtleX >= self.fruit_x and turtleX < self.fruit_x + self.fruit_width:
             if turtleY >= self.fruit_y and turtleY < self.fruit_y + self.fruit_width:
+                play_audio("audios\\eat.mp3")
                 return True
         return False
     
@@ -138,8 +155,6 @@ class move_turtle:
         turtle.sety(y)
         turtle.down()
         draw_fruit(screen=self.screen, turtle=turtle, image="images\\apple.gif")
-        play_audio("audios\\eat.mp3")
 
         self.fruit_x = x
         self.fruit_y = y
-        screen_background_random(screen=self.screen)
